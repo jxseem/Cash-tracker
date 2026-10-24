@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cash Tracker</title>
+<meta name="theme-color" content="#1f7a4d">
 <style>
 :root{--bg:#f6f4ef;--card:#fff;--ink:#1d2a24;--mute:#6b7770;--line:#e3dfd5;--save:#1f7a4d;--spend:#b4552d;--inc:#2a5d9f;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121816;--card:#1b2420;--ink:#eaf0ec;--mute:#92a099;--line:#2c3732;--save:#5fd39a;--spend:#f0a07c;--inc:#8fb8ee;--on:#0d1411}}
@@ -12,25 +13,26 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
 h1{font-size:22px;margin:0 0 4px}
+h2{font-size:16px;margin:0 0 8px}
 .sub{color:var(--mute);font-size:14px;margin:0 0 16px}
-.hero{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px}
+.hero,.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.hero{padding:18px}
 .hero .lbl{color:var(--mute);font-size:14px}
 .hero .big{font-size:40px;font-weight:700;color:var(--save);letter-spacing:-1px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
 .stat b{display:block;font-size:20px;margin-top:2px}
 .stat span{color:var(--mute);font-size:13px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.span2{grid-column:1/-1}
 .tabs{display:flex;gap:6px;margin-bottom:12px}
-.tabs button{flex:1;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:14px}
+.tabs button{flex:1;padding:10px 2px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px}
 .tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 label{display:block;font-size:13px;color:var(--mute);margin:8px 0 4px}
-input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px}
-input:focus,button:focus-visible{outline:2px solid var(--save);outline-offset:1px}
+input,select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--save);outline-offset:1px}
 .add{width:100%;margin-top:14px;padding:13px;border:0;border-radius:10px;background:var(--save);color:var(--on);font-size:16px;font-weight:600}
 .hint{font-size:13px;color:var(--mute);margin-top:8px;min-height:18px}
-.range{display:flex;gap:8px}
-.range div{flex:1}
+.range{display:flex;gap:8px}.range div{flex:1}
 .row{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
 .row:first-child{border-top:0}
 .row small{color:var(--mute);display:block}
@@ -38,126 +40,129 @@ input:focus,button:focus-visible{outline:2px solid var(--save);outline-offset:1p
 .amt.i{color:var(--inc)}.amt.e{color:var(--spend)}.amt.w{color:var(--save)}
 .del{background:none;border:0;color:var(--mute);font-size:13px;padding:0;margin-top:2px}
 .empty{color:var(--mute);text-align:center;padding:14px 0}
-h2{font-size:16px;margin:0 0 8px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chips button{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px}
 .wk{padding:10px 0;border-top:1px solid var(--line)}
 .wk:first-of-type{border-top:0}
 .wk div{display:flex;justify-content:space-between;font-size:14px;color:var(--mute)}
 .wk b{color:var(--ink);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips button{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:13px}
 .reset{width:100%;padding:12px;border-radius:10px;border:1px solid var(--spend);background:transparent;color:var(--spend);font-size:15px}
+.hide{display:none}
 </style>
 </head>
 <body>
 <main>
 <h1>Cash Tracker</h1>
-<p class="sub">Income varumbol <span id="pct">10</span>% automatic aayi savings-il pokum. Baakki kayyil kittunna cash.</p>
-<div class="hero">
-<div class="lbl">Savings baakki (select cheytha date range-il)</div>
-<div class="big" id="sav">₹0</div>
-</div>
+<p class="sub">Each income is split automatically: <span id="pct">10</span>% goes to savings, the rest is your cash.</p>
+<div class="hero"><div class="lbl">Savings balance (selected date range)</div><div class="big" id="sav">₹0</div></div>
 <div class="grid">
-<div class="stat"><span>Income kitti</span><b id="inc">₹0</b></div>
-<div class="stat"><span>Expense aayi</span><b id="exp">₹0</b></div>
-<div class="stat"><span>Kayyil kittiyath</span><b id="spendable">₹0</b></div>
-<div class="stat"><span>Expense kazhinju baakki</span><b id="left">₹0</b></div>
+<div class="stat"><span>Income</span><b id="inc">₹0</b></div>
+<div class="stat"><span>Expenses</span><b id="exp">₹0</b></div>
+<div class="stat"><span>I owe (all time)</span><b id="owe" style="color:var(--spend)">₹0</b></div>
+<div class="stat"><span>Owed to me (all time)</span><b id="recv" style="color:var(--inc)">₹0</b></div>
+<div class="stat span2"><span>Cash left (income after savings, loans and expenses)</span><b id="left">₹0</b></div>
 </div>
 <div class="box">
-<div class="tabs">
-<button id="tI" class="on" type="button">Income</button>
-<button id="tE" type="button">Expense</button>
-<button id="tW" type="button">Savings edukkuka</button>
+<div class="tabs"><button id="tI" class="on" type="button">Income</button><button id="tE" type="button">Expense</button><button id="tW" type="button">Savings out</button><button id="tL" type="button">Loan</button></div>
+<div id="loanBox" class="hide">
+<label for="k">Loan type</label>
+<select id="k"><option value="BR">I borrowed (cash in)</option><option value="RP">I paid back (cash out)</option><option value="LN">I lent (cash out)</option><option value="RC">They paid me back (cash in)</option></select>
+<label for="p">Person</label>
+<input id="p" type="text" list="pl" placeholder="Name"><datalist id="pl"></datalist>
 </div>
-<label for="d">Date</label>
-<input id="d" type="date">
-<label for="a">Amount (₹)</label>
-<input id="a" type="number" inputmode="decimal" min="0" placeholder="0">
-<label for="n">Note (catering, vegetables, ...)</label>
-<input id="n" type="text" placeholder="optional">
+<label for="d">Date</label><input id="d" type="date">
+<label for="a">Amount (₹)</label><input id="a" type="number" inputmode="decimal" min="0" placeholder="0">
+<label for="n">Note (tea, catering, ...)</label><input id="n" type="text" placeholder="optional">
 <div class="chips" id="chips"></div>
-<button class="add" id="add" type="button">Income add cheyyuka</button>
+<button class="add" id="add" type="button">Add income</button>
 <div class="hint" id="hint"></div>
 </div>
-<div class="box">
-<h2>Savings percentage</h2>
-<label for="r">Puthiya income-nu mathram badhakam (palaya entries maarilla)</label>
-<input id="r" type="number" inputmode="decimal" min="0" max="100" step="0.5">
-</div>
-<div class="box">
-<h2>Date range</h2>
-<div class="range">
-<div><label for="f">From</label><input id="f" type="date"></div>
-<div><label for="t">To</label><input id="t" type="date"></div>
-</div>
-</div>
-<div class="box">
-<h2>Summary</h2><div class="tabs" id="pt"><button type="button" data-p="W" class="on">Aazhcha</button><button type="button" data-p="M">Maasam</button><button type="button" data-p="Y">Varsham</button></div>
-<div id="weeks"></div>
-</div>
-<div class="box">
-<h2>Entries</h2><input id="q" type="search" placeholder="Note search cheyyuka (ex: chaya)"><div class="hint" id="qs"></div>
-<div id="list"></div>
-</div>
-<button class="reset" id="reset" type="button">Ellam clear cheyyuka</button>
+<div class="box"><h2>Loans by person</h2><div id="loans"></div></div>
+<div class="box"><h2>Savings percentage</h2><label for="r">Applies to new income only. Old entries keep their rate.</label><input id="r" type="number" inputmode="decimal" min="0" max="100" step="0.5"></div>
+<div class="box"><h2>Date range</h2><div class="range"><div><label for="f">From</label><input id="f" type="date"></div><div><label for="t">To</label><input id="t" type="date"></div></div></div>
+<div class="box"><h2>Summary</h2><div class="tabs" id="pt"><button type="button" data-p="W" class="on">Week</button><button type="button" data-p="M">Month</button><button type="button" data-p="Y">Year</button></div><div id="weeks"></div></div>
+<div class="box"><h2>Entries</h2><input id="q" type="search" placeholder="Search note or person (e.g. tea)"><div class="hint" id="qs"></div><div id="list"></div></div>
+<button class="reset" id="reset" type="button">Clear everything</button>
 </main>
 <script>
 (function(){
-var KEY="cash-tracker-v2",RK="cash-tracker-v2-rate",type="I",data=[],rate=10,armed=0;
+var KEY="cash-tracker-v2",RK="cash-tracker-v2-rate",tab="I",P="W",data=[],rate=10,armed=0;
+var PN={W:"week",M:"month",Y:"year"};
 var $=function(i){return document.getElementById(i)};
 function load(){try{var s=localStorage.getItem(KEY);data=s?JSON.parse(s):[];var r=parseFloat(localStorage.getItem(RK));if(r>=0&&r<=100)rate=r}catch(e){data=[]}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(RK,String(rate))}catch(e){}}
 function r2(n){return Math.round(n*100)/100}
 function inr(n){return "₹"+r2(n).toLocaleString("en-IN")}
 function ds(x){return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")}
-function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-var LB={I:"Income add cheyyuka",E:"Expense add cheyyuka",W:"Savings-il ninnu edukkuka"};
-var CL={I:"var(--save)",E:"var(--spend)",W:"var(--inc)"};
-function setType(t){type=t;["I","E","W"].forEach(function(k){$("t"+k).className=k===t?"on":""});$("add").textContent=LB[t];$("add").style.background=CL[t]}
-function totals(rows){var o={inc:0,exp:0,sv:0,wd:0};rows.forEach(function(x){if(x.t==="I"){o.inc+=x.a;o.sv+=x.a*x.r/100}else if(x.t==="E")o.exp+=x.a;else o.wd+=x.a});o.cash=o.inc-o.sv+o.wd;return o}
-function mon(d){var x=new Date(d+"T00:00:00");var k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x}
-var P="W",PN={W:"aazhcha",M:"maasam",Y:"varsham"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function mon(d){var x=new Date(d+"T00:00:00");x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
+function fmt(x){return x.toLocaleDateString("en-IN",{day:"numeric",month:"short"})}
 function pk(d){return P==="W"?ds(mon(d)):P==="M"?d.slice(0,7)+"-01":d.slice(0,4)+"-01-01"}
 function pe(s){return P==="W"?new Date(s.getFullYear(),s.getMonth(),s.getDate()+6):P==="M"?new Date(s.getFullYear(),s.getMonth()+1,0):new Date(s.getFullYear(),11,31)}
 function lab(s,e){return P==="W"?fmt(s)+" – "+fmt(e):P==="M"?s.toLocaleDateString("en-IN",{month:"long",year:"numeric"}):String(s.getFullYear())}
-function fmt(x){return x.toLocaleDateString("en-IN",{day:"numeric",month:"short"})}
+var LB={I:"Add income",E:"Add expense",W:"Take from savings",BR:"Add borrowed money",RP:"Add repayment",LN:"Add money lent",RC:"Add repayment received"};
+var CL={I:"var(--save)",E:"var(--spend)",W:"var(--inc)",L:"var(--spend)"};
+function curType(){return tab==="L"?$("k").value:tab}
+function setTab(t){tab=t;["I","E","W","L"].forEach(function(k){$("t"+k).className=k===t?"on":""});$("loanBox").className=t==="L"?"":"hide";upBtn()}
+function upBtn(){var t=curType();$("add").textContent=LB[t];$("add").style.background=CL[tab]}
+function totals(rows){var o={inc:0,exp:0,sv:0,wd:0,bin:0,bout:0};rows.forEach(function(x){var t=x.t;if(t==="I"){o.inc+=x.a;o.sv+=x.a*x.r/100}else if(t==="E")o.exp+=x.a;else if(t==="W")o.wd+=x.a;else if(t==="BR"||t==="RC")o.bin+=x.a;else o.bout+=x.a});o.cash=o.inc-o.sv+o.wd+o.bin-o.bout;o.net=o.cash-o.exp;return o}
+function people(){var m={};data.forEach(function(x){if(!x.p)return;var k=x.p.toLowerCase();if(!m[k])m[k]={n:x.p,BR:0,RP:0,LN:0,RC:0};m[k][x.t]+=x.a});return m}
+function title(x){var p=esc(x.p||"");return{I:"Income",E:"Expense",W:"Took from savings",BR:"Borrowed from "+p,RP:"Paid back "+p,LN:"Lent to "+p,RC:p+" paid back"}[x.t]}
 function render(){
 var f=$("f").value,t=$("t").value;
 var rows=data.filter(function(x){return(!f||x.d>=f)&&(!t||x.d<=t)}).sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:b.id-a.id});
 var o=totals(rows);
 $("pct").textContent=rate;
 $("sav").textContent=inr(o.sv-o.wd);$("inc").textContent=inr(o.inc);$("exp").textContent=inr(o.exp);
-$("spendable").textContent=inr(o.cash);$("left").textContent=inr(o.cash-o.exp);
-$("left").style.color=o.cash-o.exp<0?"var(--spend)":"inherit";
+$("left").textContent=inr(o.net);$("left").style.color=o.net<0?"var(--spend)":"inherit";
+var pm=people(),owe=0,rec=0,lh="",dl="";
+Object.keys(pm).forEach(function(k){var m=pm[k],a=m.BR-m.RP,b=m.LN-m.RC;dl+='<option value="'+esc(m.n)+'">';
+if(a>0.001){owe+=a;lh+='<div class="row"><div><b>'+esc(m.n)+'</b><small>You owe</small></div><div class="amt e">'+inr(a)+'</div></div>'}
+if(b>0.001){rec+=b;lh+='<div class="row"><div><b>'+esc(m.n)+'</b><small>Owes you</small></div><div class="amt i">'+inr(b)+'</div></div>'}});
+$("owe").textContent=inr(owe);$("recv").textContent=inr(rec);$("pl").innerHTML=dl;
+$("loans").innerHTML=lh||'<div class="empty">No pending loans.</div>';
 var g={},ks=[];
 rows.forEach(function(x){var k=pk(x.d);if(!g[k]){g[k]=[];ks.push(k)}g[k].push(x)});
 var w="";
-ks.sort().reverse().forEach(function(k){var s=new Date(k+"T00:00:00"),e=pe(s);var a=totals(g[k]);var pv=totals(data.filter(function(x){return x.d<k})),op=pv.cash-pv.exp;var ev=ds(e),tl=totals(data.filter(function(x){return x.d<=ev})),cl=tl.cash-tl.exp,svt=tl.sv-tl.wd;
-w+='<div class="wk"><b>'+lab(s,e)+'</b><div><span>Income '+inr(a.inc)+'</span><span>Saved '+inr(a.sv-a.wd)+'</span></div><div><span>Expense '+inr(a.exp)+'</span><span>Ee '+PN[P]+' baakki '+inr(a.cash-a.exp)+'</span></div><div><span>Munpathe '+PN[P]+' baakki '+inr(op)+'</span><b>Ippo kayyil '+inr(cl)+'</b></div><div><span>Total savings (aa '+PN[P]+' vare)</span><span>'+inr(svt)+'</span></div></div>'});
-$("weeks").innerHTML=w||'<div class="empty">Entries onnum illa.</div>';
-var h="",q=$("q").value.trim().toLowerCase(),lr=q?rows.filter(function(x){return (x.n||"").toLowerCase().indexOf(q)>-1}):rows,qt=0;lr.forEach(function(x){if(x.t==="E")qt+=x.a});$("qs").textContent=q?lr.length+" entries · expense "+inr(qt):"";rows=lr;
-rows.forEach(function(x){
-var nm=x.n?esc(x.n):(x.t==="I"?"Income":x.t==="E"?"Expense":"Savings edutthu");
-var ex=x.t==="I"?" · Savings "+inr(x.a*x.r/100)+" ("+x.r+"%)":"";
-h+='<div class="row"><div><b>'+nm+'</b><small>'+x.d+ex+'</small><button class="del" data-id="'+x.id+'" type="button">Delete</button></div><div class="amt '+(x.t==="I"?"i":x.t==="E"?"e":"w")+'">'+(x.t==="E"?"−":"+")+inr(x.a)+'</div></div>'});
-$("list").innerHTML=h||'<div class="empty">Entries onnum illa. Mukalil income add cheyyuka.</div>'}
-["I","E","W"].forEach(function(k){$("t"+k).onclick=function(){setType(k)}});
+ks.sort().reverse().forEach(function(k){var s=new Date(k+"T00:00:00"),e=pe(s),a=totals(g[k]);
+var pv=totals(data.filter(function(x){return x.d<k})),ev=ds(e),tl=totals(data.filter(function(x){return x.d<=ev}));
+w+='<div class="wk"><b>'+lab(s,e)+'</b><div><span>Income '+inr(a.inc)+'</span><span>Saved '+inr(a.sv-a.wd)+'</span></div><div><span>Expenses '+inr(a.exp)+'</span><span>Loans net '+inr(a.bin-a.bout)+'</span></div><div><span>Brought forward '+inr(pv.net)+'</span><b>Cash in hand '+inr(tl.net)+'</b></div><div><span>Left this '+PN[P]+' '+inr(a.net)+'</span><span>Total savings '+inr(tl.sv-tl.wd)+'</span></div></div>'});
+$("weeks").innerHTML=w||'<div class="empty">No entries yet.</div>';
+var q=$("q").value.trim().toLowerCase(),lr=q?rows.filter(function(x){return((x.n||"")+" "+(x.p||"")).toLowerCase().indexOf(q)>-1}):rows,qt=0,h="";
+lr.forEach(function(x){if(x.t==="E")qt+=x.a});
+$("qs").textContent=q?lr.length+" entries · expenses "+inr(qt):"";
+lr.forEach(function(x){var out=x.t==="E"||x.t==="RP"||x.t==="LN",cls=x.t==="I"?"i":x.t==="W"?"w":out?"e":"i";
+var ex=x.t==="I"?" · Saved "+inr(x.a*x.r/100)+" ("+x.r+"%)":"";
+h+='<div class="row"><div><b>'+title(x)+'</b><small>'+x.d+(x.n?" · "+esc(x.n):"")+ex+'</small><button class="del" data-id="'+x.id+'" type="button">Delete</button></div><div class="amt '+cls+'">'+(out?"−":"+")+inr(x.a)+'</div></div>'});
+$("list").innerHTML=h||'<div class="empty">No entries yet. Add one above.</div>'}
+["I","E","W","L"].forEach(function(k){$("t"+k).onclick=function(){setTab(k)}});
+$("k").onchange=upBtn;
 $("add").onclick=function(){
-var a=parseFloat($("a").value),d=$("d").value||ds(new Date());
-if(!(a>0)){$("hint").textContent="Amount enter cheyyuka.";return}
-var cur=totals(data).sv-totals(data).wd;
-if(type==="W"&&a>cur){$("hint").textContent="Savings-il "+inr(cur)+" mathrame ullu.";return}
-data.push({id:Date.now(),t:type,d:d,a:a,r:rate,n:$("n").value.trim()});
+var a=parseFloat($("a").value),d=$("d").value||ds(new Date()),t=curType(),p=$("p").value.trim(),hint=$("hint");
+if(!(a>0)){hint.textContent="Enter an amount.";return}
+if(tab==="L"){if(!p){hint.textContent="Enter the person's name.";return}
+var m=people()[p.toLowerCase()]||{BR:0,RP:0,LN:0,RC:0};
+if(t==="RP"&&a>m.BR-m.RP+0.001){hint.textContent="You only owe "+inr(Math.max(0,m.BR-m.RP))+" to "+p+".";return}
+if(t==="RC"&&a>m.LN-m.RC+0.001){hint.textContent=p+" only owes you "+inr(Math.max(0,m.LN-m.RC))+".";return}}
+var all=totals(data);
+if(t==="W"&&a>all.sv-all.wd+0.001){hint.textContent="Only "+inr(all.sv-all.wd)+" in savings.";return}
+data.push({id:Date.now(),t:t,d:d,a:a,r:rate,n:$("n").value.trim(),p:tab==="L"?p:""});
 save();
-$("hint").textContent=type==="I"?inr(a*rate/100)+" savings-il mattivechu. "+inr(a-a*rate/100)+" kayyil.":type==="E"?"Expense add cheythu.":inr(a)+" savings-il ninnu eduthu.";
+hint.textContent=t==="I"?inr(a*rate/100)+" moved to savings. "+inr(a-a*rate/100)+" is your cash.":"Added.";
 $("a").value="";$("n").value="";render()};
 $("r").onchange=function(){var v=parseFloat($("r").value);if(v>=0&&v<=100){rate=v;save();render()}else $("r").value=rate};
 $("list").onclick=function(e){var id=e.target.getAttribute&&e.target.getAttribute("data-id");if(!id)return;data=data.filter(function(x){return String(x.id)!==id});save();render()};
 $("reset").onclick=function(){
-if(!armed){armed=1;$("reset").textContent="Sure aano? Onnu koodi tap cheyyuka";setTimeout(function(){armed=0;$("reset").textContent="Ellam clear cheyyuka"},4000);return}
-armed=0;data=[];save();$("reset").textContent="Ellam clear cheyyuka";$("hint").textContent="Ellam clear aayi.";render()};
-$("pt").onclick=function(e){var p=e.target.getAttribute&&e.target.getAttribute("data-p");if(!p)return;P=p;Array.prototype.forEach.call($("pt").children,function(b){b.className=b.getAttribute("data-p")===p?"on":""});render()};$("f").onchange=render;$("t").onchange=render;$("q").oninput=render;var CH=["Chaya","Food","Travel","Petrol","Recharge","Catering"];$("chips").innerHTML=CH.map(function(c){return '<button type="button">'+c+'</button>'}).join("");$("chips").onclick=function(e){if(e.target.tagName==="BUTTON")$("n").value=e.target.textContent};
+if(!armed){armed=1;$("reset").textContent="Sure? Tap again to clear everything";setTimeout(function(){armed=0;$("reset").textContent="Clear everything"},4000);return}
+armed=0;data=[];save();$("reset").textContent="Clear everything";$("hint").textContent="Everything cleared.";render()};
+$("pt").onclick=function(e){var p=e.target.getAttribute&&e.target.getAttribute("data-p");if(!p)return;P=p;Array.prototype.forEach.call($("pt").children,function(b){b.className=b.getAttribute("data-p")===p?"on":""});render()};
+$("f").onchange=render;$("t").onchange=render;$("q").oninput=render;
+var CH=["Tea","Food","Travel","Petrol","Recharge","Catering"];
+$("chips").innerHTML=CH.map(function(c){return '<button type="button">'+c+'</button>'}).join("");
+$("chips").onclick=function(e){if(e.target.tagName==="BUTTON")$("n").value=e.target.textContent};
 $("d").value=ds(new Date());
-load();$("r").value=rate;render();
+load();$("r").value=rate;upBtn();render();
+if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister()})}).catch(function(){});if(window.caches)caches.keys().then(function(k){k.forEach(function(x){caches.delete(x)})}).catch(function(){})}
 })();
 </script>
 </body>
